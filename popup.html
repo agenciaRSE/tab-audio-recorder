@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tab Recorder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Tab Recorder</h1>
+            <div class="header-right">
+                <span class="shortcut-hint" title="Keyboard Shortcut">Alt+Shift+U</span>
+                <div id="status-badge" class="badge hidden">
+                    <span class="dot"></span> Recording
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="timer" id="timer">00:00</div>
+            <p class="description" id="status-text">Capture audio from the current tab.</p>
+        </main>
+
+        <footer id="controls">
+            <!-- Idle State -->
+            <button id="start-btn" class="btn btn-primary">Start Recording</button>
+
+            <!-- Recording State -->
+            <button id="stop-btn" class="btn btn-destructive hidden">Stop Recording</button>
+
+            <!-- Finished State -->
+            <div id="finished-options" class="hidden"
+                style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
+                <button id="save-webm-btn" class="btn btn-primary">Save as WebM</button>
+                <button id="save-mp3-btn" class="btn btn-primary"
+                    style="background-color: #27272a; color: white; border: 1px solid #3f3f46;">Convert & Save as
+                    MP3</button>
+                <button id="discard-btn" class="btn btn-primary"
+                    style="background-color: #27272a; color: #ef4444; border: 1px solid #3f3f46; margin-top: 5px;">Discard
+                    Recording</button>
+            </div>
+        </footer>
+
+        <div class="separator"></div>
+
+        <div class="info-section">
+            <p>Support Development:</p>
+            <div class="link-row">
+                <a href="#" id="link-donate" class="link-item">Donate (Stripe)</a>
+                <a href="#" id="link-web" class="link-item">Web Services</a>
+            </div>
+            <a href="#" id="link-email" class="link-item secondary-link">Report Bugs: dev@agenciarse.com</a>
+        </div>
+    </div>
+    <script src="popup.js"></script>
+</body>
+
+</html>
