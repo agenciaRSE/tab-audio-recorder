@@ -1,25 +1,27 @@
 {
-"update_url": "https://clients2.google.com/service/update2/crx",
-
   "manifest_version": 3,
-  "name": "Tab Audio Recorder",
-  "version": "1.0",
-  "description": "Record audio from the current tab.",
-  "permissions": [
-    "tabCapture",
-    "offscreen",
-    "downloads",
-    "storage"
-  ],
+  "name": "__MSG_extName__",
+  "version": "1.1.0",
+  "description": "__MSG_extDescription__",
+  "default_locale": "en",
+  "minimum_chrome_version": "127",
+  "permissions": ["tabCapture", "offscreen", "downloads", "storage"],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Record Audio"
+    "default_title": "__MSG_actionTitle__",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "background": {
     "service_worker": "background.js"
   },
   "icons": {
     "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
@@ -29,7 +31,7 @@
         "default": "Alt+Shift+U",
         "mac": "Command+Shift+U"
       },
-      "description": "Start/Stop Recording"
+      "description": "__MSG_cmdToggle__"
     }
   }
 }

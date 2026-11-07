@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<!-- Renders the real popup.html markup with styles.css and _locales, in a given state.
+     Serve the repo root over HTTP: popup-mock.html?state=recording&lang=es&time=12:48 -->
+<html lang="en">
+<head><meta charset="UTF-8"><link rel="stylesheet" href="../../styles.css">
+<style>body{overflow:hidden}</style></head>
+<body>
+<script>
+(async () => {
+  const q = new URLSearchParams(location.search);
+  const lang = q.get('lang') || 'en', st = q.get('state') || 'idle';
+  const msgs = await (await fetch(`../../_locales/${lang}/messages.json`)).json();
+  const t = (k) => msgs[k]?.message ?? k;
+  const html = await (await fetch('../../popup.html')).text();
+  document.body.innerHTML = new DOMParser().parseFromString(html, 'text/html').body.innerHTML.replace(/<script[^>]*><\/script>/g, '');
+  document.documentElement.lang = lang;
+  document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+  const $ = (id) => document.getElementById(id);
+  $('timer').textContent = q.get('time') || '00:00';
+  $('shortcut').textContent = lang === 'es' ? 'Alt+Mayús+U' : 'Alt+Shift+U';
+  const rec = st === 'recording' || st === 'paused';
+  $('start-btn').classList.toggle('hidden', st !== 'idle');
+  $('recording-controls').classList.toggle('hidden', !rec);
+  $('finished-controls').classList.toggle('hidden', st !== 'finished');
+  $('status-badge').classList.toggle('hidden', !rec);
+  $('badge-text').textContent = t(st === 'paused' ? 'stateBadgePaused' : 'stateBadgeRecording');
+  $('pause-btn').textContent = t(st === 'paused' ? 'btnResume' : 'btnPause');
+  $('status-text').textContent = q.get('notice') ? t(q.get('notice')).replace('$1', q.get('file') || '') : t({ idle: 'statusIdle', recording: 'statusRecording', paused: 'statusPaused', finished: 'statusFinished' }[st]);
+  if (q.get('kind')) $('status-text').dataset.kind = q.get('kind');
+  if (q.get('settings')) { document.querySelector('details').open = true; $('shortcut-save').value = q.get('settings'); $('ask-where').checked = q.get('ask') !== '0'; }
+  else { $('ask-where').checked = true; }
+  document.body.dataset.ready = '1';
+})();
+</script>
+</body>
+</html>

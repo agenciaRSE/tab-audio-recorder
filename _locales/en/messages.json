@@ -1,0 +1,134 @@
+{
+  "extName": {
+    "message": "Tab Audio Recorder"
+  },
+  "extDescription": {
+    "message": "Record the audio of the current tab and save it as MP3 or WebM. Everything stays in your browser."
+  },
+  "actionTitle": {
+    "message": "Record tab audio"
+  },
+  "cmdToggle": {
+    "message": "Start or stop recording"
+  },
+  "badgeRecording": {
+    "message": "Recording this tab"
+  },
+  "badgePaused": {
+    "message": "Recording paused"
+  },
+  "badgeFinished": {
+    "message": "Recording ready to save"
+  },
+  "badgeSaving": {
+    "message": "Saving recording…"
+  },
+  "btnStart": {
+    "message": "Record this tab"
+  },
+  "btnPause": {
+    "message": "Pause"
+  },
+  "btnResume": {
+    "message": "Resume"
+  },
+  "btnStop": {
+    "message": "Stop"
+  },
+  "btnSaveMp3": {
+    "message": "Save as MP3"
+  },
+  "btnSaveWebm": {
+    "message": "Save as WebM"
+  },
+  "btnDiscard": {
+    "message": "Discard recording"
+  },
+  "btnDiscardConfirm": {
+    "message": "Click again to discard"
+  },
+  "stateBadgeRecording": {
+    "message": "Recording"
+  },
+  "stateBadgePaused": {
+    "message": "Paused"
+  },
+  "statusIdle": {
+    "message": "Records only the sound of the current tab."
+  },
+  "statusRecording": {
+    "message": "Recording. You can keep listening as usual."
+  },
+  "statusPaused": {
+    "message": "Paused. Resume or stop when you are ready."
+  },
+  "statusFinished": {
+    "message": "Recording stopped. Choose a format to save it."
+  },
+  "statusSaving": {
+    "message": "Saving… Long recordings take a few seconds to convert to MP3."
+  },
+  "noticeSaved": {
+    "message": "Saved: $1"
+  },
+  "noticeNotSaved": {
+    "message": "The file was not saved. Your recording is still here."
+  },
+  "noticeTabClosed": {
+    "message": "The tab stopped being available, so recording stopped. Save what was recorded."
+  },
+  "errBusy": {
+    "message": "A recording is already in progress or waiting to be saved."
+  },
+  "errNothingToSave": {
+    "message": "There is no recording to save."
+  },
+  "errLost": {
+    "message": "The recording is no longer in memory. Record again."
+  },
+  "errSave": {
+    "message": "Could not save the file ($1). Your recording is still here; try again."
+  },
+  "errGeneric": {
+    "message": "Something went wrong. Try again."
+  },
+  "shortcutLabel": {
+    "message": "Shortcut:"
+  },
+  "shortcutNone": {
+    "message": "not set"
+  },
+  "shortcutChange": {
+    "message": "Change"
+  },
+  "settingsTitle": {
+    "message": "Settings"
+  },
+  "settingShortcutSave": {
+    "message": "When you stop with the shortcut"
+  },
+  "optAsk": {
+    "message": "Show the save options"
+  },
+  "optMp3": {
+    "message": "Save as MP3 straight away"
+  },
+  "optWebm": {
+    "message": "Save as WebM straight away"
+  },
+  "settingAskWhere": {
+    "message": "Ask where to save each file"
+  },
+  "linkDonate": {
+    "message": "Donate"
+  },
+  "linkWeb": {
+    "message": "AGENCIA RSE"
+  },
+  "linkBugs": {
+    "message": "Report a bug"
+  },
+  "errStart": {
+    "message": "Could not record this tab ($1). Chrome does not allow recording its own pages, such as settings or the Web Store."
+  }
+}

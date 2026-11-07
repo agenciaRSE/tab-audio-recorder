@@ -4,57 +4,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tab Recorder</title>
+    <title>Tab Audio Recorder</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
     <div class="container">
         <header>
-            <h1>Tab Recorder</h1>
-            <div class="header-right">
-                <span class="shortcut-hint" title="Keyboard Shortcut">Alt+Shift+U</span>
-                <div id="status-badge" class="badge hidden">
-                    <span class="dot"></span> Recording
-                </div>
-            </div>
+            <h1>Tab Audio Recorder</h1>
+            <span id="status-badge" class="badge hidden"><span class="dot" aria-hidden="true"></span><span id="badge-text"></span></span>
         </header>
 
         <main>
-            <div class="timer" id="timer">00:00</div>
-            <p class="description" id="status-text">Capture audio from the current tab.</p>
+            <div class="timer" id="timer" role="timer">00:00</div>
+            <p class="status" id="status-text" role="status" aria-live="polite"></p>
+
+            <div class="controls">
+                <!-- idle -->
+                <button id="start-btn" class="btn btn-record" data-i18n="btnStart"></button>
+
+                <!-- recording / paused -->
+                <div id="recording-controls" class="row hidden">
+                    <button id="pause-btn" class="btn btn-secondary" data-i18n="btnPause"></button>
+                    <button id="stop-btn" class="btn btn-primary" data-i18n="btnStop"></button>
+                </div>
+
+                <!-- finished -->
+                <div id="finished-controls" class="stack hidden">
+                    <button id="save-mp3-btn" class="btn btn-primary" data-i18n="btnSaveMp3"></button>
+                    <button id="save-webm-btn" class="btn btn-secondary" data-i18n="btnSaveWebm"></button>
+                    <button id="discard-btn" class="btn btn-danger" data-i18n="btnDiscard"></button>
+                </div>
+            </div>
+
+            <p class="hint"><span data-i18n="shortcutLabel"></span> <kbd id="shortcut"></kbd>
+                <a href="chrome://extensions/shortcuts" id="shortcut-link" data-i18n="shortcutChange"></a></p>
         </main>
 
-        <footer id="controls">
-            <!-- Idle State -->
-            <button id="start-btn" class="btn btn-primary">Start Recording</button>
+        <details class="settings">
+            <summary data-i18n="settingsTitle"></summary>
+            <label for="shortcut-save" data-i18n="settingShortcutSave"></label>
+            <select id="shortcut-save">
+                <option value="ask" data-i18n="optAsk"></option>
+                <option value="mp3" data-i18n="optMp3"></option>
+                <option value="webm" data-i18n="optWebm"></option>
+            </select>
+            <label class="check"><input type="checkbox" id="ask-where"> <span data-i18n="settingAskWhere"></span></label>
+        </details>
 
-            <!-- Recording State -->
-            <button id="stop-btn" class="btn btn-destructive hidden">Stop Recording</button>
-
-            <!-- Finished State -->
-            <div id="finished-options" class="hidden"
-                style="display: flex; flex-direction: column; gap: 0.5rem; width: 100%;">
-                <button id="save-webm-btn" class="btn btn-primary">Save as WebM</button>
-                <button id="save-mp3-btn" class="btn btn-primary"
-                    style="background-color: #27272a; color: white; border: 1px solid #3f3f46;">Convert & Save as
-                    MP3</button>
-                <button id="discard-btn" class="btn btn-primary"
-                    style="background-color: #27272a; color: #ef4444; border: 1px solid #3f3f46; margin-top: 5px;">Discard
-                    Recording</button>
-            </div>
+        <footer>
+            <a href="https://agenciarse.com/stripe" class="link" data-i18n="linkDonate"></a>
+            <a href="https://agenciarse.com" class="link" data-i18n="linkWeb"></a>
+            <a href="mailto:dev@agenciarse.com" class="link" data-i18n="linkBugs"></a>
         </footer>
-
-        <div class="separator"></div>
-
-        <div class="info-section">
-            <p>Support Development:</p>
-            <div class="link-row">
-                <a href="#" id="link-donate" class="link-item">Donate (Stripe)</a>
-                <a href="#" id="link-web" class="link-item">Web Services</a>
-            </div>
-            <a href="#" id="link-email" class="link-item secondary-link">Report Bugs: dev@agenciarse.com</a>
-        </div>
     </div>
     <script src="popup.js"></script>
 </body>

@@ -1,145 +1,148 @@
-document.addEventListener('DOMContentLoaded', async () => {
-    const startBtn = document.getElementById('start-btn');
-    const stopBtn = document.getElementById('stop-btn');
-    const finishedOptions = document.getElementById('finished-options');
-    const saveWebmBtn = document.getElementById('save-webm-btn');
-    const saveMp3Btn = document.getElementById('save-mp3-btn');
-    const discardBtn = document.getElementById('discard-btn');
+// Tab Audio Recorder: popup. Renders the state kept in chrome.storage.local by the service worker.
 
-    const statusBadge = document.getElementById('status-badge');
-    const timerElement = document.getElementById('timer');
-    const statusText = document.getElementById('status-text');
+const t = (key, subs) => chrome.i18n.getMessage(key, subs) || key;
+const $ = (id) => document.getElementById(id);
 
-    let timerInterval;
+const ui = {
+    badge: $('status-badge'), badgeText: $('badge-text'), timer: $('timer'), status: $('status-text'),
+    start: $('start-btn'), recording: $('recording-controls'), pause: $('pause-btn'), stop: $('stop-btn'),
+    finished: $('finished-controls'), saveMp3: $('save-mp3-btn'), saveWebm: $('save-webm-btn'), discard: $('discard-btn'),
+    shortcut: $('shortcut'), shortcutSave: $('shortcut-save'), askWhere: $('ask-where'),
+};
 
-    // Check current status
-    const { recordingState, startTime } = await chrome.storage.local.get(['recordingState', 'startTime']);
+let timerInterval;
+let discardArmed = false;
+let state = {};
 
-    updateUI(recordingState || 'idle');
-    if (recordingState === 'recording' && startTime) {
-        startTimer(startTime);
+// --- i18n ---
+document.documentElement.lang = chrome.i18n.getUILanguage();
+document.querySelectorAll('[data-i18n]').forEach((el) => { el.textContent = t(el.dataset.i18n); });
+
+// --- Links: popups cannot follow chrome:// or mailto: links on their own ---
+document.querySelectorAll('a[href]').forEach((a) => a.addEventListener('click', (e) => {
+    e.preventDefault();
+    chrome.tabs.create({ url: a.href });
+}));
+
+// --- Actions ---
+async function send(type, extra = {}) {
+    setBusy(true);
+    state.notice = null;
+    try {
+        const res = await chrome.runtime.sendMessage({ type, ...extra });
+        if (!res?.ok) state.notice = { kind: 'error', text: res?.error || t('errGeneric') };
+    } catch (err) {
+        state.notice = { kind: 'error', text: err.message };
+    } finally {
+        setBusy(false);
+        render();
     }
+}
 
-    // --- Event Listeners ---
+ui.start.addEventListener('click', async () => {
+    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (tab) send('START_RECORDING', { tabId: tab.id });
+});
+ui.pause.addEventListener('click', () => send(state.recordingState === 'paused' ? 'RESUME_RECORDING' : 'PAUSE_RECORDING'));
+ui.stop.addEventListener('click', () => send('STOP_RECORDING'));
+ui.saveMp3.addEventListener('click', () => send('SAVE', { format: 'mp3' }));
+ui.saveWebm.addEventListener('click', () => send('SAVE', { format: 'webm' }));
 
-    startBtn.addEventListener('click', async () => {
-        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-        if (!tab) return;
-
-        chrome.runtime.sendMessage({ type: 'START_RECORDING', tabId: tab.id }, (response) => {
-            if (response && response.success) {
-                updateUI('recording');
-                startTimer(Date.now());
-            } else {
-                console.error('Failed to start:', response?.error);
-            }
-        });
-    });
-
-    stopBtn.addEventListener('click', () => {
-        chrome.runtime.sendMessage({ type: 'STOP_RECORDING' }, (response) => {
-            if (response && response.success) {
-                updateUI('finished');
-                stopTimer();
-            }
-        });
-    });
-
-    saveWebmBtn.addEventListener('click', () => {
-        statusText.textContent = "Saving WebM...";
-        chrome.runtime.sendMessage({ type: 'SAVE_WEBM' }, () => {
-            updateUI('idle');
-        });
-    });
-
-    saveMp3Btn.addEventListener('click', () => {
-        statusText.textContent = "Converting to MP3... (This may take a moment)";
-        saveMp3Btn.disabled = true;
-        saveWebmBtn.disabled = true;
-
-        chrome.runtime.sendMessage({ type: 'SAVE_MP3' }, () => {
-            // We'll reset to idle when download starts (handled by background message or manually here)
-            setTimeout(() => updateUI('idle'), 500);
-        });
-    });
-
-    discardBtn.addEventListener('click', () => {
-        chrome.runtime.sendMessage({ type: 'DISCARD_RECORDING' }, () => {
-            updateUI('idle');
-        });
-    });
-
-    // --- Helper Functions ---
-
-    function updateUI(state) {
-        // Reset all visibility
-        startBtn.classList.add('hidden');
-        stopBtn.classList.add('hidden');
-        finishedOptions.classList.add('hidden');
-        statusBadge.classList.add('hidden');
-
-        saveMp3Btn.disabled = false;
-        saveWebmBtn.disabled = false;
-
-        if (state === 'recording') {
-            stopBtn.classList.remove('hidden');
-            statusBadge.classList.remove('hidden');
-            statusText.textContent = "Recording...";
-        } else if (state === 'finished') {
-            finishedOptions.classList.remove('hidden');
-            finishedOptions.style.display = 'flex'; // override hidden class
-            statusText.textContent = "Recording paused. Choose format:";
-        } else {
-            // Idle
-            startBtn.classList.remove('hidden');
-            timerElement.textContent = '00:00';
-            statusText.textContent = "Capture audio from the current tab.";
-        }
+// Discarding loses the recording: ask for a second click instead of a modal dialog.
+ui.discard.addEventListener('click', () => {
+    if (discardArmed) {
+        disarmDiscard();
+        send('DISCARD_RECORDING');
+        return;
     }
+    discardArmed = true;
+    ui.discard.textContent = t('btnDiscardConfirm');
+    setTimeout(disarmDiscard, 4000);
+});
 
-    function startTimer(startTime) {
-        stopTimer();
-        const update = () => {
-            const elapsed = Date.now() - startTime;
-            const seconds = Math.floor((elapsed / 1000) % 60);
-            const minutes = Math.floor((elapsed / (1000 * 60)) % 60);
-            timerElement.textContent = `${pad(minutes)}:${pad(seconds)}`;
-        };
-        update();
-        timerInterval = setInterval(update, 1000);
+function disarmDiscard() {
+    discardArmed = false;
+    ui.discard.textContent = t('btnDiscard');
+}
+
+function setBusy(busy) {
+    [ui.start, ui.pause, ui.stop, ui.saveMp3, ui.saveWebm, ui.discard].forEach((b) => { b.disabled = busy; });
+}
+
+// --- Rendering ---
+function render() {
+    const s = state.recordingState || 'idle';
+    ui.start.classList.toggle('hidden', s !== 'idle');
+    ui.recording.classList.toggle('hidden', s !== 'recording' && s !== 'paused');
+    ui.finished.classList.toggle('hidden', s !== 'finished' && s !== 'saving');
+    [ui.saveMp3, ui.saveWebm, ui.discard].forEach((b) => { b.disabled = s === 'saving'; });
+
+    ui.pause.textContent = t(s === 'paused' ? 'btnResume' : 'btnPause');
+    ui.badge.classList.toggle('hidden', s !== 'recording' && s !== 'paused');
+    ui.badge.classList.toggle('paused', s === 'paused');
+    ui.badgeText.textContent = t(s === 'paused' ? 'stateBadgePaused' : 'stateBadgeRecording');
+
+    if (state.notice) showNotice(state.notice);
+    else showNotice({ kind: 'info', text: t({ idle: 'statusIdle', recording: 'statusRecording', paused: 'statusPaused', finished: 'statusFinished', saving: 'statusSaving' }[s]) });
+
+    clearInterval(timerInterval);
+    if (s === 'idle') ui.timer.textContent = formatTime(0);
+    else {
+        updateTimer();
+        if (s === 'recording') timerInterval = setInterval(updateTimer, 500);
     }
+}
 
-    function stopTimer() {
-        if (timerInterval) clearInterval(timerInterval);
-    }
+function showNotice({ kind, text }) {
+    ui.status.textContent = text;
+    ui.status.dataset.kind = kind;
+}
 
-    function pad(num) {
-        return num.toString().padStart(2, '0');
-    }
+function updateTimer() {
+    const end = state.pausedAt || Date.now();
+    ui.timer.textContent = formatTime(end - (state.startTime || end) - (state.pausedTotal || 0));
+}
 
-    // --- Link Handling ---
-    document.getElementById('link-donate').addEventListener('click', () => {
-        chrome.tabs.create({ url: 'https://agenciarse.com/stripe' });
-    });
+function formatTime(ms) {
+    const total = Math.max(0, Math.floor(ms / 1000));
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const sec = total % 60;
+    const p = (n) => String(n).padStart(2, '0');
+    return h ? `${h}:${p(m)}:${p(sec)}` : `${p(m)}:${p(sec)}`;
+}
 
-    document.getElementById('link-web').addEventListener('click', () => {
-        chrome.tabs.create({ url: 'https://agenciarse.com' });
-    });
+// --- Settings ---
+async function loadSettings() {
+    const { settings } = await chrome.storage.local.get('settings');
+    const s = { shortcutSave: 'ask', askWhere: true, ...settings };
+    ui.shortcutSave.value = s.shortcutSave;
+    ui.askWhere.checked = s.askWhere;
+}
 
-    document.getElementById('link-email').addEventListener('click', () => {
-        chrome.tabs.create({ url: 'mailto:dev@agenciarse.com' });
-    });
+function saveSettings() {
+    chrome.storage.local.set({ settings: { shortcutSave: ui.shortcutSave.value, askWhere: ui.askWhere.checked } });
+}
+ui.shortcutSave.addEventListener('change', saveSettings);
+ui.askWhere.addEventListener('change', saveSettings);
 
-    // Listen for state changes from background (e.g. shortcuts)
-    chrome.runtime.onMessage.addListener(async (message) => {
-        if (message.type === 'UI_UPDATE') {
-            updateUI(message.state);
-            if (message.state === 'recording') {
-                const { startTime } = await chrome.storage.local.get('startTime');
-                if (startTime) startTimer(startTime);
-            } else {
-                stopTimer();
-            }
-        }
-    });
+// --- Init ---
+(async () => {
+    const [command] = (await chrome.commands.getAll()).filter((c) => c.name === 'toggle-recording');
+    ui.shortcut.textContent = command?.shortcut || t('shortcutNone');
+
+    state = await chrome.storage.local.get(['recordingState', 'startTime', 'pausedAt', 'pausedTotal', 'notice']);
+    render();
+    loadSettings();
+
+    // A notice is shown once: clear it so the next opening shows the plain status.
+    if (state.notice && state.recordingState === 'idle') chrome.storage.local.set({ notice: null });
+})();
+
+chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== 'local') return;
+    const keys = ['recordingState', 'startTime', 'pausedAt', 'pausedTotal', 'notice'];
+    if (!keys.some((k) => k in changes)) return;
+    keys.forEach((k) => { if (k in changes) state[k] = changes[k].newValue; });
+    render();
 });

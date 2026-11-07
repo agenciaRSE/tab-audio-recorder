@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<!-- Chrome Web Store graphics. Serve the repo root over HTTP and open
+     shots.html?id=1&lang=en  (ids: 1-4 = 1280x800 screenshots, small = 440x280, marquee = 1400x560) -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { box-sizing: border-box; }
+  html, body { margin: 0; }
+  body {
+    font-family: "Segoe UI", Inter, -apple-system, Roboto, Arial, sans-serif;
+    color: #fafafa; overflow: hidden;
+    background: radial-gradient(900px 600px at 85% 15%, rgba(220,38,38,.22), transparent 60%), #09090b;
+  }
+  .stage { position: relative; display: flex; align-items: center; gap: 64px; padding: 0 80px; height: 100%; }
+  .copy { flex: 1; }
+  .eyebrow { display: inline-flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 600; color: #fca5a5; letter-spacing: .02em; }
+  .eyebrow img { width: 28px; height: 28px; }
+  h1 { font-size: 54px; line-height: 1.08; letter-spacing: -0.03em; margin: 18px 0 22px; font-weight: 750; }
+  h1 em { font-style: normal; color: #f87171; }
+  ul { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; font-size: 22px; color: #d4d4d8; }
+  li { display: flex; gap: 12px; align-items: baseline; }
+  li::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: #f87171; transform: translateY(-3px); }
+  kbd { font-family: Consolas, ui-monospace, monospace; font-size: .85em; background: #27272a; border: 1px solid #3f3f46; border-radius: 6px; padding: 2px 8px; color: #fafafa; }
+  .browser { width: 560px; border-radius: 14px; background: #1f1f23; border: 1px solid #3f3f46; box-shadow: 0 30px 80px rgba(0,0,0,.55); overflow: hidden; flex: none; }
+  .bar { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #27272a; }
+  .url { flex: 1; height: 30px; border-radius: 15px; background: #18181b; color: #a1a1aa; font-size: 14px; display: flex; align-items: center; padding: 0 14px; }
+  .ext { position: relative; width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; background: #3f3f46; }
+  .ext img { width: 18px; height: 18px; }
+  .ext b { position: absolute; right: -10px; bottom: -6px; font-size: 10px; font-weight: 700; background: #d92d20; color: #fff; border-radius: 4px; padding: 1px 4px; }
+  .body { position: relative; height: 650px; }
+  .page { position: absolute; inset: 0; padding: 22px; display: grid; gap: 14px; align-content: start; }
+  .video { height: 210px; border-radius: 10px; background: linear-gradient(135deg, #3f3f46, #27272a); display: grid; place-items: center; }
+  .video svg { width: 70px; opacity: .8; }
+  .line { height: 12px; border-radius: 6px; background: #3f3f46; }
+  .popup { position: absolute; top: 8px; right: 12px; width: 320px; border: 0; border-radius: 10px; box-shadow: 0 18px 50px rgba(0,0,0,.6); background: #09090b; transform: scale(1.35); transform-origin: top right; }
+  .tile { display: flex; flex-direction: column; justify-content: center; height: 100%; padding: 0 34px; }
+  .tile .name { display: flex; align-items: center; gap: 16px; font-size: 32px; font-weight: 750; letter-spacing: -0.02em; }
+  .tile .name img { width: 64px; height: 64px; }
+  .tile p { font-size: 21px; color: #d4d4d8; margin: 18px 0 0; line-height: 1.3; }
+</style>
+</head>
+<body>
+<script>
+const q = new URLSearchParams(location.search);
+const id = q.get('id') || '1', lang = q.get('lang') || 'en';
+const T = {
+  en: {
+    s1: ['Record the audio of <em>any tab</em>', ['Only the sound of that tab: no microphone, no notifications', 'Keep listening while it records', 'Pause and resume whenever you need']],
+    s2: ['Save as <em>MP3</em> or <em>WebM</em>', ['Stereo MP3 that plays everywhere', 'WebM for an instant save', 'Choose where to save it, or send it straight to Downloads']],
+    s3: ['Hands-free with <kbd>Alt+Shift+U</kbd>', ['Start and stop without opening the popup', 'Save in your favourite format when you stop', 'A REC badge shows when a tab is being recorded']],
+    s4: ['Everything stays <em>in your browser</em>', ['No account and no sign-up', 'Nothing is uploaded: the audio never leaves your computer', 'No analytics, no ads, free']],
+    small: 'Record the audio of a tab and save it as MP3 or WebM.',
+    marquee: ['Record the audio of <em>any tab</em>', 'MP3 or WebM. No account. Nothing uploaded.'],
+    url: 'learn.example.com/course/lesson-3',
+  },
+  es: {
+    s1: ['Graba el audio de <em>cualquier pestaña</em>', ['Solo el sonido de esa pestaña: ni micrófono ni notificaciones', 'Sigue escuchándola mientras graba', 'Pausa y reanuda cuando lo necesites']],
+    s2: ['Guárdalo en <em>MP3</em> o <em>WebM</em>', ['MP3 estéreo que se reproduce en cualquier sitio', 'WebM para guardar al instante', 'Elige dónde guardarlo o mándalo directo a Descargas']],
+    s3: ['Sin manos con <kbd>Alt+Mayús+U</kbd>', ['Empieza y para sin abrir la ventana', 'Al parar, se guarda en tu formato favorito', 'Un distintivo REC avisa de qué se está grabando']],
+    s4: ['Todo se queda <em>en tu navegador</em>', ['Sin cuenta ni registro', 'No se sube nada: el audio no sale de tu ordenador', 'Sin analítica ni anuncios, gratis']],
+    small: 'Graba el audio de una pestaña y guárdalo en MP3 o WebM.',
+    marquee: ['Graba el audio de <em>cualquier pestaña</em>', 'MP3 o WebM. Sin cuenta. Sin subir nada.'],
+    url: 'aprende.example.com/curso/leccion-3',
+  },
+}[lang];
+const POPUP = {
+  1: 'state=recording&time=12:48',
+  2: 'state=finished&time=24:05',
+  3: 'state=recording&time=03:17&settings=mp3&ask=0',
+  4: 'state=idle&notice=noticeSaved&kind=success&file=recording-2026-11-08_10-24-05.mp3',
+  marquee: 'state=recording&time=12:48',
+};
+const SIZE = { small: [440, 280], marquee: [1400, 560] }[id] || [1280, 800];
+document.body.style.width = SIZE[0] + 'px';
+document.body.style.height = SIZE[1] + 'px';
+
+const browser = (popup, badge) => `
+  <div class="browser" aria-hidden="true">
+    <div class="bar"><div class="url">${T.url}</div><div class="ext"><img src="../../icons/icon32.png" alt="">${badge ? '<b>REC</b>' : ''}</div></div>
+    <div class="body"><div class="page">
+      <div class="video"><svg viewBox="0 0 24 24" fill="#a1a1aa"><path d="M8 5v14l11-7z"/></svg></div>
+      <div class="line" style="width:80%"></div><div class="line" style="width:62%"></div><div class="line" style="width:70%"></div>
+    </div><iframe class="popup" src="popup-mock.html?lang=${lang}&${popup}" scrolling="no"></iframe></div>
+  </div>`;
+
+const eyebrow = '<div class="eyebrow"><img src="../../icons/icon128.png" alt="">Tab Audio Recorder</div>';
+if (id === 'small') {
+  document.body.innerHTML = `<div class="tile"><div class="name"><img src="../../icons/icon128.png" alt="">Tab Audio Recorder</div><p>${T.small}</p></div>`;
+} else if (id === 'marquee') {
+  document.body.innerHTML = `<div class="stage"><div class="copy">${eyebrow}<h1 style="font-size:60px">${T.marquee[0]}</h1><ul><li>${T.marquee[1]}</li></ul></div>${browser(POPUP.marquee, true)}</div>`;
+  document.querySelector('.body').style.height = '440px';
+  document.querySelector('.popup').style.transform = 'scale(1.05)';
+} else {
+  const [h, items] = T['s' + id];
+  document.body.innerHTML = `<div class="stage"><div class="copy">${eyebrow}<h1>${h}</h1><ul>${items.map((i) => `<li>${i}</li>`).join('')}</ul></div>${browser(POPUP[id], id === '1' || id === '3')}</div>`;
+}
+
+// Size the popup iframe to its content, then flag the page as ready for the screenshot.
+const frame = document.querySelector('iframe');
+if (!frame) document.body.dataset.ready = '1';
+else frame.addEventListener('load', () => {
+  const poll = setInterval(() => {
+    const doc = frame.contentDocument;
+    if (doc && doc.body && doc.body.dataset.ready) {
+      clearInterval(poll);
+      frame.style.height = doc.querySelector('.container').scrollHeight + 'px';
+      document.body.dataset.ready = '1';
+    }
+  }, 50);
+});
+</script>
+</body>
+</html>

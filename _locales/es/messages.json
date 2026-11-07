@@ -1,0 +1,134 @@
+{
+  "extName": {
+    "message": "Tab Audio Recorder"
+  },
+  "extDescription": {
+    "message": "Graba el audio de la pestaña actual y guárdalo en MP3 o WebM. Todo se queda en tu navegador."
+  },
+  "actionTitle": {
+    "message": "Grabar el audio de la pestaña"
+  },
+  "cmdToggle": {
+    "message": "Empezar o parar la grabación"
+  },
+  "badgeRecording": {
+    "message": "Grabando esta pestaña"
+  },
+  "badgePaused": {
+    "message": "Grabación en pausa"
+  },
+  "badgeFinished": {
+    "message": "Grabación lista para guardar"
+  },
+  "badgeSaving": {
+    "message": "Guardando la grabación…"
+  },
+  "btnStart": {
+    "message": "Grabar esta pestaña"
+  },
+  "btnPause": {
+    "message": "Pausar"
+  },
+  "btnResume": {
+    "message": "Reanudar"
+  },
+  "btnStop": {
+    "message": "Parar"
+  },
+  "btnSaveMp3": {
+    "message": "Guardar en MP3"
+  },
+  "btnSaveWebm": {
+    "message": "Guardar en WebM"
+  },
+  "btnDiscard": {
+    "message": "Descartar la grabación"
+  },
+  "btnDiscardConfirm": {
+    "message": "Pulsa otra vez para descartar"
+  },
+  "stateBadgeRecording": {
+    "message": "Grabando"
+  },
+  "stateBadgePaused": {
+    "message": "En pausa"
+  },
+  "statusIdle": {
+    "message": "Graba solo el sonido de la pestaña actual."
+  },
+  "statusRecording": {
+    "message": "Grabando. Puedes seguir escuchándola con normalidad."
+  },
+  "statusPaused": {
+    "message": "En pausa. Reanuda o para cuando quieras."
+  },
+  "statusFinished": {
+    "message": "Grabación parada. Elige el formato para guardarla."
+  },
+  "statusSaving": {
+    "message": "Guardando… Las grabaciones largas tardan unos segundos en pasar a MP3."
+  },
+  "noticeSaved": {
+    "message": "Guardado: $1"
+  },
+  "noticeNotSaved": {
+    "message": "No se ha guardado el archivo. La grabación sigue aquí."
+  },
+  "noticeTabClosed": {
+    "message": "La pestaña dejó de estar disponible y la grabación se paró. Guarda lo grabado."
+  },
+  "errBusy": {
+    "message": "Ya hay una grabación en curso o pendiente de guardar."
+  },
+  "errNothingToSave": {
+    "message": "No hay ninguna grabación que guardar."
+  },
+  "errLost": {
+    "message": "La grabación ya no está en memoria. Vuelve a grabar."
+  },
+  "errSave": {
+    "message": "No se pudo guardar el archivo ($1). La grabación sigue aquí; inténtalo de nuevo."
+  },
+  "errGeneric": {
+    "message": "Algo ha fallado. Inténtalo de nuevo."
+  },
+  "shortcutLabel": {
+    "message": "Atajo:"
+  },
+  "shortcutNone": {
+    "message": "sin asignar"
+  },
+  "shortcutChange": {
+    "message": "Cambiar"
+  },
+  "settingsTitle": {
+    "message": "Ajustes"
+  },
+  "settingShortcutSave": {
+    "message": "Al parar con el atajo"
+  },
+  "optAsk": {
+    "message": "Mostrar las opciones de guardado"
+  },
+  "optMp3": {
+    "message": "Guardar en MP3 directamente"
+  },
+  "optWebm": {
+    "message": "Guardar en WebM directamente"
+  },
+  "settingAskWhere": {
+    "message": "Preguntar dónde guardar cada archivo"
+  },
+  "linkDonate": {
+    "message": "Donar"
+  },
+  "linkWeb": {
+    "message": "AGENCIA RSE"
+  },
+  "linkBugs": {
+    "message": "Informar de un error"
+  },
+  "errStart": {
+    "message": "No se pudo grabar esta pestaña ($1). Chrome no deja grabar sus propias páginas, como los ajustes o la Web Store."
+  }
+}
